@@ -20,11 +20,6 @@ data "aws_subnet_ids" "all" {
   vpc_id = "${data.aws_vpc.default.id}"
 }
 
-data "aws_security_group" "default" {
-  vpc_id = "${data.aws_vpc.default.id}"
-  name   = "default"
-}
-
 data "aws_ami" "amazon_linux" {
   most_recent = true
 
@@ -45,42 +40,31 @@ data "aws_ami" "amazon_linux" {
   }
 }
 
-######
-# Launch configuration and autoscaling group
-######
+#######################
+# Launch configuration
+# (сreating it outside of the module for example)
+#######################
+resource "aws_launch_configuration" "this" {
+  name_prefix   = "my-launch-configuration-"
+  image_id      = "${data.aws_ami.amazon_linux.id}"
+  instance_type = "t2.micro"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 module "example" {
   source = "../../"
 
-  name = "example-with-ec2"
+  name = "example-with-ec2-external-lc"
 
-  # Launch configuration
-  #
-  # launch_configuration = "my-existing-launch-configuration" # Use the existing launch configuration
-  # create_lc = false # disables creation of launch configuration
-  lc_name = "example-lc"
+  # Use of existing launch configuration (created outside of this module)
+  launch_configuration = "${aws_launch_configuration.this.name}"
 
-  image_id                     = "${data.aws_ami.amazon_linux.id}"
-  instance_type                = "t2.micro"
-  security_groups              = ["${data.aws_security_group.default.id}"]
-  associate_public_ip_address  = true
+  create_lc = false
+
   recreate_asg_when_lc_changes = true
-
-  ebs_block_device = [
-    {
-      device_name           = "/dev/xvdz"
-      volume_type           = "gp2"
-      volume_size           = "50"
-      delete_on_termination = true
-    },
-  ]
-
-  root_block_device = [
-    {
-      volume_size           = "50"
-      volume_type           = "gp2"
-      delete_on_termination = true
-    },
-  ]
 
   # Auto scaling group
   asg_name                  = "example-asg"
