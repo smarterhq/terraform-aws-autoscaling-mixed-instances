@@ -7,11 +7,14 @@ These types of resources are supported:
 * [Launch Template](https://www.terraform.io/docs/providers/aws/r/launch_template.html)
 * [Auto Scaling Group](https://www.terraform.io/docs/providers/aws/r/autoscaling_group.html)
 
+This module will require more than 1 instance type. Suitable to back ECS Cluster.
+
 ## Usage
 
 ```hcl
 module "asg" {
-  source = "terraform-aws-modules/autoscaling/aws"
+  source = "HENNGE/autoscaling-mixed-instances/aws"
+  version = "1.0.0"
 
   name = "service"
 
