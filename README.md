@@ -24,7 +24,7 @@ Terraform 0.11. Pin module version to `~> v1.0`. Submit pull-requests to `terraf
 ```hcl
 module "asg" {
   source = "HENNGE/autoscaling-mixed-instances/aws"
-  version = "1.0.0"
+  version = "2.0.0"
 
   name = "service"
 
@@ -111,7 +111,6 @@ module "asg" {
 
   on_demand_base_capacity                  = 0
   on_demand_percentage_above_base_capacity = 100
-  spot_instance_pools                      = 5
 }
 ```
 
