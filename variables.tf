@@ -147,6 +147,17 @@ variable "block_device_mappings" {
   default     = [{}]
 }
 
+variable "network_interfaces" {
+  description = "Mappings of network interface devices, see https://www.terraform.io/docs/providers/aws/r/launch_template.html#network-interfaces"
+  type        = list(any)
+  default = [
+    {
+      device_index          = 0
+      delete_on_termination = true
+    }
+  ]
+}
+
 variable "placement_tenancy" {
   description = "The tenancy of the instance. Valid values are 'default' or 'dedicated'"
   type        = string

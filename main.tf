@@ -36,13 +36,26 @@ resource "aws_launch_template" "this" {
     arn = var.iam_instance_profile
   }
 
-  network_interfaces {
-    description                 = coalesce(var.lt_name, var.name)
-    device_index                = 0
-    associate_public_ip_address = var.associate_public_ip_address
-    delete_on_termination       = true
-    security_groups             = var.security_groups
+  dynamic "network_interfaces" {
+    for_each = var.network_interfaces
+    content {
+      description                 = lookup(network_interfaces.value, "description", coalesce(var.lt_name, var.name))
+      device_index                = lookup(network_interfaces.value, "device_index", null)
+      associate_public_ip_address = lookup(network_interfaces.value, "associate_public_ip_address", var.associate_public_ip_address)
+      delete_on_termination       = lookup(network_interfaces.value, "delete_on_termination", true)
+      ipv4_address_count          = lookup(network_interfaces.value, "ipv4_address_count", null)
+      ipv6_address_count          = lookup(network_interfaces.value, "ipv6_address_count", null)
+      security_groups             = lookup(network_interfaces.value, "security_groups", var.security_groups)
+    }
   }
+
+  #network_interfaces {
+  #  description                 = coalesce(var.lt_name, var.name)
+  #  device_index                = 0
+  #  associate_public_ip_address = var.associate_public_ip_address
+  #  delete_on_termination       = true
+  #  security_groups             = var.security_groups
+  #}
 
   monitoring {
     enabled = var.enable_monitoring
