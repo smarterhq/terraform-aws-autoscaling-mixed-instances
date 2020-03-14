@@ -43,7 +43,9 @@ resource "aws_launch_template" "this" {
       device_index                = lookup(network_interfaces.value, "device_index", null)
       associate_public_ip_address = lookup(network_interfaces.value, "associate_public_ip_address", var.associate_public_ip_address)
       delete_on_termination       = lookup(network_interfaces.value, "delete_on_termination", true)
+      ipv4_addresses              = null
       ipv4_address_count          = lookup(network_interfaces.value, "ipv4_address_count", null)
+      ipv6_addresses              = null
       ipv6_address_count          = lookup(network_interfaces.value, "ipv6_address_count", null)
       security_groups             = lookup(network_interfaces.value, "security_groups", var.security_groups)
     }
